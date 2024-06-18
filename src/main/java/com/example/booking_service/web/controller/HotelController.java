@@ -5,6 +5,7 @@ import com.example.booking_service.mapper.HotelMapper;
 import com.example.booking_service.service.HotelService;
 import com.example.booking_service.web.model.request.HotelRequest;
 import com.example.booking_service.web.model.response.HotelResponse;
+import com.example.booking_service.web.model.response.HotelResponseList;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/hotels")
@@ -20,22 +20,19 @@ import java.util.List;
 @Slf4j
 public class HotelController {
 
-    // TODO: Настроить валидацию данных на HotelRequest
-
     private final HotelService hotelService;
 
     private final HotelMapper hotelMapper;
 
+    // TODO: - пагинация
     @GetMapping
-    public ResponseEntity<List<HotelResponse>> getAllHotels() { // TODO: написать потом как все остальные
+    public ResponseEntity<HotelResponseList> findAllHotels() {
         return ResponseEntity.ok(
-                hotelService.findAllHotels().stream()
-                .map(hotelMapper::hotelToHotelResponse)
-                .toList());
+                hotelMapper.hotelListToHotelResponseList(hotelService.findAllHotels()));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<HotelResponse> getHotelById(@PathVariable("id") Long hotelId) {
+    public ResponseEntity<HotelResponse> findHotelById(@PathVariable("id") Long hotelId) {
         return ResponseEntity.ok().body(hotelMapper.hotelToHotelResponse(hotelService.findHotelById(hotelId)));
     }
 

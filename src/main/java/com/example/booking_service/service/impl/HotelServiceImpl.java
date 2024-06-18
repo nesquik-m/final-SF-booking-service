@@ -18,12 +18,12 @@ public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
 
     @Override
-    public List<Hotel> findAllHotels() {
+    public List<Hotel> findAllHotels() { // пагинация
         return hotelRepository.findAll();
     }
 
     @Override
-    public Hotel findHotelById(Long hotelId) { // TODO: Перехватчик исключений!
+    public Hotel findHotelById(Long hotelId) {
         return hotelRepository.findById(hotelId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         MessageFormat.format("Отель с ID {0} не найден!", hotelId)));
@@ -44,7 +44,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public void deleteHotelById(Long hotelId) {
-        findHotelById(hotelId); // убедимся, что такой id существует (иначе словим исключение)
+        findHotelById(hotelId); // убедимся, что такой id существует (иначе ловим исключение)
         hotelRepository.deleteById(hotelId);
     }
 
