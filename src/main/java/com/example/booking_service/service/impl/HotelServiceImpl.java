@@ -5,6 +5,7 @@ import com.example.booking_service.exception.EntityNotFoundException;
 import com.example.booking_service.repository.HotelRepository;
 import com.example.booking_service.service.HotelService;
 import com.example.booking_service.utils.BeanUtils;
+import com.example.booking_service.web.model.request.PageableRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +19,8 @@ public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
 
     @Override
-    public List<Hotel> findAllHotels() { // пагинация
-        return hotelRepository.findAll();
+    public List<Hotel> findAllHotels(PageableRequest request) {
+        return hotelRepository.findAll(request.pageRequest()).getContent();
     }
 
     @Override

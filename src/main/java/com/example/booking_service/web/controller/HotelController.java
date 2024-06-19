@@ -4,6 +4,7 @@ import com.example.booking_service.entity.Hotel;
 import com.example.booking_service.mapper.HotelMapper;
 import com.example.booking_service.service.HotelService;
 import com.example.booking_service.web.model.request.HotelRequest;
+import com.example.booking_service.web.model.request.PageableRequest;
 import com.example.booking_service.web.model.response.HotelResponse;
 import com.example.booking_service.web.model.response.HotelResponseList;
 import jakarta.validation.Valid;
@@ -24,11 +25,10 @@ public class HotelController {
 
     private final HotelMapper hotelMapper;
 
-    // TODO: - пагинация
     @GetMapping
-    public ResponseEntity<HotelResponseList> findAllHotels() {
+    public ResponseEntity<HotelResponseList> findAllHotels(@Valid PageableRequest request) {
         return ResponseEntity.ok(
-                hotelMapper.hotelListToHotelResponseList(hotelService.findAllHotels()));
+                hotelMapper.hotelListToHotelResponseList(hotelService.findAllHotels(request)));
     }
 
     @GetMapping("/{id}")

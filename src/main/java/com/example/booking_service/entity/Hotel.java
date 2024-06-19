@@ -7,8 +7,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 /*
 Вопросы куратору:
 1) private Double rating; // По заданию - (от 1 до 5). Реальный рейтинг обычно состоит из дробных чисел.
