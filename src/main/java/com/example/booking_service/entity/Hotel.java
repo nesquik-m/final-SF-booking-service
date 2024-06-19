@@ -2,10 +2,10 @@ package com.example.booking_service.entity;
 
 import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 Вопросы куратору:
@@ -38,5 +38,10 @@ public class Hotel {
 
     @Column(name = "number_of_ratings")
     private Integer numberOfRatings;
+
+    @OneToMany(mappedBy = "hotel", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Room> rooms = new ArrayList<>();
 
 }

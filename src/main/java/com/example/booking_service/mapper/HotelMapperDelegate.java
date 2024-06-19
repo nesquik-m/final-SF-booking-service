@@ -3,8 +3,6 @@ package com.example.booking_service.mapper;
 import com.example.booking_service.entity.Hotel;
 import com.example.booking_service.web.model.request.HotelRequest;
 
-import java.util.UUID;
-
 public abstract class HotelMapperDelegate implements HotelMapper {
 
     @Override

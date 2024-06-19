@@ -9,16 +9,13 @@ import com.example.booking_service.web.model.response.HotelResponse;
 import com.example.booking_service.web.model.response.HotelResponseList;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-
 @RestController
 @RequestMapping("/api/v1/hotels")
 @RequiredArgsConstructor
-@Slf4j
 public class HotelController {
 
     private final HotelService hotelService;
@@ -52,7 +49,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable("id") Long hotelId) {
+    public ResponseEntity<Void> deleteHotelById(@PathVariable("id") Long hotelId) {
         hotelService.deleteHotelById(hotelId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
