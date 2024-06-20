@@ -24,6 +24,14 @@ public class ExceptionHandlerController {
                 .body(new ErrorResponse(ex.getLocalizedMessage()));
     }
 
+    @ExceptionHandler(AlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> alreadyExists(AlreadyExistsException ex) {
+        log.error("Ошибка при создании или обновлении сущности: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> notValid(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();
