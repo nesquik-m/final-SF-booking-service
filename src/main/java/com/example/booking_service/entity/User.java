@@ -29,4 +29,9 @@ public class User {
     @Builder.Default
     private List<Role> roles = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Booking> bookings = new ArrayList<>();
+
 }

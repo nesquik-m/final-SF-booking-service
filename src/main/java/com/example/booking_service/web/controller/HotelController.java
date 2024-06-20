@@ -25,7 +25,8 @@ public class HotelController {
     @GetMapping
     public ResponseEntity<HotelResponseList> findAllHotels(@Valid PageableRequest request) {
         return ResponseEntity.ok(
-                hotelMapper.hotelListToHotelResponseList(hotelService.findAllHotels(request)));
+                hotelMapper.hotelListToHotelResponseList(
+                        hotelService.findAllHotels(request)));
     }
 
     @GetMapping("/{id}")

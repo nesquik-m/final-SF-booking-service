@@ -32,6 +32,14 @@ public class ExceptionHandlerController {
                 .body(new ErrorResponse(ex.getMessage()));
     }
 
+    @ExceptionHandler(AlreadyReservedDatesException.class)
+    public ResponseEntity<ErrorResponse> alreadyReserved(AlreadyReservedDatesException ex) {
+        log.error("Ошибка при бронировании комнаты: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage()));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> notValid(MethodArgumentNotValidException ex) {
         BindingResult bindingResult = ex.getBindingResult();

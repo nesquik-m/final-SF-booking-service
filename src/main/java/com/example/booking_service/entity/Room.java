@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,16 +28,19 @@ public class Room {
 
     private BigDecimal price;
 
-    @Column(name = "max")
+    @Column(name = "max_num_persons")
     private Integer maxNumberOfPeople;
-
-    @Builder.Default
-    @ToString.Exclude
-    private List<Instant> bookedDates = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "room_id", nullable = false)
     @ToString.Exclude
     private Hotel hotel;
+
+    @Builder.Default
+    private List<LocalDate> bookedDates = new ArrayList<>();
+
+    public void addBookedDates(List<LocalDate> dates) {
+        bookedDates.addAll(dates);
+    }
 
 }
