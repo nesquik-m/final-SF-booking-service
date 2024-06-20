@@ -24,6 +24,6 @@ public class RoomResponse {
 
     private Integer maxNumberOfPeople;
 
-    private String hotelName;
+    private Long hotelId;
 
 }

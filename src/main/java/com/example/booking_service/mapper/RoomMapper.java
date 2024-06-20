@@ -14,7 +14,7 @@ public interface RoomMapper {
 
     Room requestToRoom(RoomRequest request);
 
-    @Mapping(source = "hotel.name", target = "hotelName")
+    @Mapping(source = "hotel.id", target = "hotelId")
     RoomResponse roomToRoomResponse(Room room);
 
 }
