@@ -15,12 +15,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.MessageFormat;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
+
+    // TODO: НЕТ В ТЗ, но сделать -> Совершить действия с профилем пользователя может только либо сам пользователь (владелец), либо администратор.
 
     private final UserService userService;
 

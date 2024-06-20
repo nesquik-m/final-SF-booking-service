@@ -6,6 +6,7 @@ import com.example.booking_service.exception.EntityNotFoundException;
 import com.example.booking_service.repository.UserRepository;
 import com.example.booking_service.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
@@ -17,7 +18,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public User findUserById(Long userId) {
@@ -29,7 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User createUser(User user, Role role) {
         user.setRoles(Collections.singletonList(role));
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         role.setUser(user);
 
         return userRepository.saveAndFlush(user);
@@ -39,7 +40,7 @@ public class UserServiceImpl implements UserService {
     public User updateUser(Long userId, User user) {
         User updatedUser = findUserById(userId);
         updatedUser.setUsername(user.getUsername());
-//        updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        updatedUser.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.saveAndFlush(updatedUser);
     }
 

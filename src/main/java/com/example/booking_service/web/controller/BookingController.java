@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,6 +26,7 @@ public class BookingController {
     private final BookingMapper bookingMapper;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<BookingResponseList> findAllBookings(@Valid PageableRequest request) { // Странное поведение?
         return ResponseEntity.ok(
                 bookingMapper.bookingListToBookingResponseList(
@@ -32,6 +34,7 @@ public class BookingController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<BookingResponse> bookARoom(@RequestBody @Valid BookingRequest request) {
         Booking bookedRoom = bookingService.bookARoom(bookingMapper.requestToBooking(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingMapper.bookingToBookingResponse(bookedRoom));

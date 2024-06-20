@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +24,7 @@ public class HotelController {
     private final HotelMapper hotelMapper;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<HotelResponseList> findAllHotels(@Valid PageableRequest request) {
         return ResponseEntity.ok(
                 hotelMapper.hotelListToHotelResponseList(
@@ -30,11 +32,13 @@ public class HotelController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> findHotelById(@PathVariable("id") Long hotelId) {
         return ResponseEntity.ok().body(hotelMapper.hotelToHotelResponse(hotelService.findHotelById(hotelId)));
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> createHotel(@RequestBody @Valid HotelRequest request) {
         Hotel createdHotel = hotelService.createHotel(hotelMapper.requestToHotel(request));
 
@@ -42,6 +46,7 @@ public class HotelController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> updateHotel(@PathVariable("id") Long hotelId,
                                                      @RequestBody @Valid HotelRequest request) {
         Hotel updatedHotel = hotelService.updateHotel(hotelId, hotelMapper.requestToHotel(request));
@@ -50,6 +55,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteHotelById(@PathVariable("id") Long hotelId) {
         hotelService.deleteHotelById(hotelId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
