@@ -16,12 +16,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class BookingRequest {
 
-    @NotBlank(message = "Дата заезда должна быть заполнена!")
     @Future(message = "Некорректный ввод даты заезда")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate checkIn;
 
-    @NotBlank(message = "Дата выезда должна быть заполнена!")
     @Future(message = "Некорректный ввод даты выезда")
     @JsonFormat(pattern = "dd/MM/yyyy")
     private LocalDate checkOut;
