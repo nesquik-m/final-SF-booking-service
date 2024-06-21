@@ -7,6 +7,7 @@ import com.example.booking_service.service.RoomService;
 import com.example.booking_service.utils.BeanUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 
@@ -29,6 +30,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional
     public Room updateRoom(Long roomId, Room room) {
         Room updatedRoom = findRoomById(roomId);
         BeanUtils.copyNonNullProperties(room, updatedRoom);
@@ -36,6 +38,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    @Transactional
     public void deleteRoomById(Long roomId) {
         findRoomById(roomId);
         roomRepository.deleteById(roomId);

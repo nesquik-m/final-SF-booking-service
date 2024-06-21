@@ -2,6 +2,7 @@ package com.example.booking_service.service;
 
 import com.example.booking_service.entity.Hotel;
 import com.example.booking_service.web.model.request.PageableRequest;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -16,4 +17,6 @@ public interface HotelService {
     Hotel updateHotel(Long hotelId, Hotel hotel);
 
     void deleteHotelById(Long hotelId);
+
+    void giveARating(Long hotelId, int newMark);
 }

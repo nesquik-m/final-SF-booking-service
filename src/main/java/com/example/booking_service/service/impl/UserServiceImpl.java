@@ -8,6 +8,7 @@ import com.example.booking_service.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
 import java.util.Collections;
@@ -28,15 +29,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User createUser(User user, Role role) {
         user.setRoles(Collections.singletonList(role));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         role.setUser(user);
-
         return userRepository.saveAndFlush(user);
     }
 
     @Override
+    @Transactional
     public User updateUser(Long userId, User user) {
         User updatedUser = findUserById(userId);
         updatedUser.setUsername(user.getUsername());
@@ -45,6 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUserById(Long userId) {
         findUserById(userId);
         userRepository.deleteById(userId);

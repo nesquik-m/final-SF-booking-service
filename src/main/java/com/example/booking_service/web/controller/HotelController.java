@@ -8,7 +8,10 @@ import com.example.booking_service.web.model.request.PageableRequest;
 import com.example.booking_service.web.model.response.HotelResponse;
 import com.example.booking_service.web.model.response.HotelResponseList;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Range;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -59,6 +62,14 @@ public class HotelController {
     public ResponseEntity<Void> deleteHotelById(@PathVariable("id") Long hotelId) {
         hotelService.deleteHotelById(hotelId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PostMapping("/rating/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    public ResponseEntity<Void> giveARating(@PathVariable("id") Long hotelId,
+                                            @RequestParam @Range(min = 1, max = 5) int newMark) {
+        hotelService.giveARating(hotelId, newMark);
+        return ResponseEntity.ok().build();
     }
 
 }
