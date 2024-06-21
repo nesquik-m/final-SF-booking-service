@@ -2,8 +2,8 @@ package com.example.booking_service.mapper;
 
 import com.example.booking_service.entity.Hotel;
 import com.example.booking_service.web.model.request.HotelRequest;
-import com.example.booking_service.web.model.response.HotelResponse;
 import com.example.booking_service.web.model.response.HotelResponseList;
+import com.example.booking_service.web.model.response.HotelResponse;
 import org.mapstruct.DecoratedWith;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
@@ -19,8 +19,9 @@ public interface HotelMapper {
 
     HotelResponse hotelToHotelResponse(Hotel hotel);
 
-    default HotelResponseList hotelListToHotelResponseList(List<Hotel> hotels) {
+    default HotelResponseList hotelListToHotelResponseList(Long totalCountHotels, List<Hotel> hotels) {
         return HotelResponseList.builder()
+                .totalCountHotels(totalCountHotels)
                 .hotels(hotels.stream().map(this::hotelToHotelResponse).collect(Collectors.toList()))
                 .build();
     }

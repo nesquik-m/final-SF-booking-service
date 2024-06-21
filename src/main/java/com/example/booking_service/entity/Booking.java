@@ -22,13 +22,11 @@ public class Booking {
     @Column(name = "check_out")
     private LocalDate checkOut;
 
-    // одну комнату можно бронировать несколько раз, но на разные даты
     @ManyToOne
     @JoinColumn(name = "room_id")
     @ToString.Exclude
     private Room room;
 
-    // один user может сделать несколько бронирований любой комнаты, но на разные даты
     @ManyToOne
     @JoinColumn(name = "user_id")
     @ToString.Exclude

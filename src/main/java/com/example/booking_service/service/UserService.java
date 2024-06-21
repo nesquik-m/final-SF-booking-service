@@ -5,8 +5,6 @@ import com.example.booking_service.entity.User;
 
 public interface UserService {
 
-//    List<User> findAllUsers(PageableRequest request);
-
     User findUserById(Long userId);
 
     User createUser(User user, Role role);

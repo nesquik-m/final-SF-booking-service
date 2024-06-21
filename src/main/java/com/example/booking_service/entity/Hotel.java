@@ -7,12 +7,6 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
-Вопросы куратору:
-1) private Double rating; // По заданию - (от 1 до 5). Реальный рейтинг обычно состоит из дробных чисел.
-
-*/
-
 @Entity(name = "hotels")
 @Data
 @Builder

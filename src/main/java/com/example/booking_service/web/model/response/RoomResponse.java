@@ -1,6 +1,5 @@
 package com.example.booking_service.web.model.response;
 
-import com.example.booking_service.entity.Hotel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

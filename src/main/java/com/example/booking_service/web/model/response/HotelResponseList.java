@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class HotelResponseList {
 
+    private Long totalCountHotels;
+
     @Builder.Default
     private List<HotelResponse> hotels = new ArrayList<>();
 

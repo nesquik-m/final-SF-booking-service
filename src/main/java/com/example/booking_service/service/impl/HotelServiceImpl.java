@@ -3,16 +3,18 @@ package com.example.booking_service.service.impl;
 import com.example.booking_service.entity.Hotel;
 import com.example.booking_service.exception.EntityNotFoundException;
 import com.example.booking_service.repository.HotelRepository;
+import com.example.booking_service.repository.HotelSpecification;
 import com.example.booking_service.service.HotelService;
 import com.example.booking_service.utils.BeanUtils;
+import com.example.booking_service.web.model.request.HotelFilter;
 import com.example.booking_service.web.model.request.PageableRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,8 +24,13 @@ public class HotelServiceImpl implements HotelService {
     private final HotelRepository hotelRepository;
 
     @Override
-    public List<Hotel> findAllHotels(PageableRequest request) {
-        return hotelRepository.findAll(request.pageRequest()).getContent();
+    public Page<Hotel> filterBy(HotelFilter filter, PageableRequest pageable) {
+        return hotelRepository.findAll(HotelSpecification.withFilter(filter), pageable.pageRequest());
+    }
+
+    @Override
+    public Page<Hotel> findAllHotels(PageableRequest request) {
+        return hotelRepository.findAll(request.pageRequest());
     }
 
     @Override
@@ -45,7 +52,6 @@ public class HotelServiceImpl implements HotelService {
         BeanUtils.copyNonNullProperties(hotel, updatedHotel);
         return hotelRepository.save(updatedHotel);
     }
-
 
     @Override
     @Transactional

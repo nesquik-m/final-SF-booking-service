@@ -27,14 +27,13 @@ public class BookingController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
-    public ResponseEntity<BookingResponseList> findAllBookings(@Valid PageableRequest request) { // Странное поведение?
+    public ResponseEntity<BookingResponseList> findAllBookings(@Valid PageableRequest request) {
         return ResponseEntity.ok(
                 bookingMapper.bookingListToBookingResponseList(
                         bookingService.findAllBookings(request)));
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<BookingResponse> bookARoom(@RequestBody @Valid BookingRequest request) {
         Booking bookedRoom = bookingService.bookARoom(bookingMapper.requestToBooking(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(bookingMapper.bookingToBookingResponse(bookedRoom));

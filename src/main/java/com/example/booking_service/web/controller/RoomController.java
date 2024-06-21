@@ -22,7 +22,6 @@ public class RoomController {
     private final RoomMapper roomMapper;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> findRoomById(@PathVariable("id") Long roomId) {
         return ResponseEntity.ok().body(roomMapper.roomToRoomResponse(roomService.findRoomById(roomId)));
     }

@@ -1,7 +1,6 @@
 package com.example.booking_service.mapper;
 
 import com.example.booking_service.entity.Booking;
-import com.example.booking_service.entity.Hotel;
 import com.example.booking_service.web.model.request.BookingRequest;
 import com.example.booking_service.web.model.response.BookingResponse;
 import com.example.booking_service.web.model.response.BookingResponseList;

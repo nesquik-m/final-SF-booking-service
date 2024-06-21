@@ -1,14 +1,15 @@
 package com.example.booking_service.service;
 
 import com.example.booking_service.entity.Hotel;
+import com.example.booking_service.web.model.request.HotelFilter;
 import com.example.booking_service.web.model.request.PageableRequest;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface HotelService {
 
-    List<Hotel> findAllHotels(PageableRequest request);
+    Page<Hotel> filterBy(HotelFilter filter, PageableRequest pageable);
+
+    Page<Hotel> findAllHotels(PageableRequest request);
 
     Hotel findHotelById(Long hotelId);
 
