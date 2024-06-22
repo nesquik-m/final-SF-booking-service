@@ -35,3 +35,5 @@ out/
 
 ### VS Code ###
 .vscode/
+/data/file.csv
+/data/statistics.csv

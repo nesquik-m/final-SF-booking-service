@@ -47,7 +47,7 @@ public class HotelController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> createHotel(@RequestBody @Valid HotelRequest request) {
         Hotel createdHotel = hotelService.createHotel(hotelMapper.requestToHotel(request));
 
@@ -55,7 +55,7 @@ public class HotelController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<HotelResponse> updateHotel(@PathVariable("id") Long hotelId,
                                                      @RequestBody @Valid HotelRequest request) {
         Hotel updatedHotel = hotelService.updateHotel(hotelId, hotelMapper.requestToHotel(request));
@@ -64,7 +64,7 @@ public class HotelController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteHotelById(@PathVariable("id") Long hotelId) {
         hotelService.deleteHotelById(hotelId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

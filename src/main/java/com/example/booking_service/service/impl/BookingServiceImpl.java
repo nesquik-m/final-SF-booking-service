@@ -3,12 +3,16 @@ package com.example.booking_service.service.impl;
 import com.example.booking_service.entity.Booking;
 import com.example.booking_service.entity.Room;
 import com.example.booking_service.exception.AlreadyReservedDatesException;
+import com.example.booking_service.mapper.BookingMapper;
+import com.example.booking_service.model.KafkaBookingEvent;
 import com.example.booking_service.repository.BookingRepository;
 import com.example.booking_service.service.BookingService;
 import com.example.booking_service.service.RoomService;
 import com.example.booking_service.web.model.request.PageableRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -21,9 +25,16 @@ import java.util.Objects;
 @Slf4j
 public class BookingServiceImpl implements BookingService {
 
+    @Value("${app.kafka.kafkaNewBookingTopic}")
+    private String topicName;
+
+    private final KafkaTemplate<String, KafkaBookingEvent> kafkaBookingEventTemplate;
+
     private final RoomService roomService;
 
     private final BookingRepository bookingRepository;
+
+    private final BookingMapper bookingMapper;
 
     @Override
     public List<Booking> findAllBookings(PageableRequest request) {
@@ -45,7 +56,11 @@ public class BookingServiceImpl implements BookingService {
         room.addBookedDates(dates);
         roomService.createRoom(room);
 
-        return bookingRepository.saveAndFlush(booking);
+        Booking createdBooking = bookingRepository.saveAndFlush(booking);
+
+        kafkaBookingEventTemplate.send(topicName, bookingMapper.bookingToKafkaNewBooking(booking));
+
+        return createdBooking;
     }
 
     private List<LocalDate> getAllRequestedDates(LocalDate checkIn, LocalDate checkOut) {

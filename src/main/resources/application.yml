@@ -1,6 +1,8 @@
 spring:
+
   jpa:
     generate-ddl: true
+
   datasource:
     url: jdbc:postgresql://localhost:5432/app_db
     username: postgres
@@ -9,3 +11,18 @@ spring:
       schema: app_schema
       connection-init-sql: CREATE SCHEMA IF NOT EXISTS app_schema
       connection-timeout: 10000
+
+  data:
+    mongodb:
+      uri: mongodb://root:root@localhost:27017/bookingservice?authSource=admin
+
+  kafka:
+    bootstrap-servers: localhost:9092
+
+app:
+
+  kafka:
+    kafkaNewUserTopic: "new-user-topic"
+    kafkaNewBookingTopic: "new-booking-topic"
+    kafkaMessageGroupId: "kafka-message-group-id"
+

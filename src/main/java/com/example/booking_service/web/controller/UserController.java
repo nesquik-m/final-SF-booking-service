@@ -21,7 +21,7 @@ import java.text.MessageFormat;
 @RequiredArgsConstructor
 public class UserController {
 
-    // TODO: НЕТ В ТЗ, но сделать -> Совершить действия с профилем пользователя может только либо сам пользователь (владелец), либо администратор.
+    // TODO: Совершить действия с профилем пользователя может только либо сам пользователь (владелец), либо администратор.
 
     private final UserService userService;
 
@@ -52,7 +52,6 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(userMapper.userToUserResponse(updatedUser));
     }
 
-    // По ТЗ не требуется
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable("id") Long userId) {
         userService.deleteUserById(userId);

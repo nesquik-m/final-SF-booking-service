@@ -26,7 +26,7 @@ public class BookingController {
     private final BookingMapper bookingMapper;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookingResponseList> findAllBookings(@Valid PageableRequest request) {
         return ResponseEntity.ok(
                 bookingMapper.bookingListToBookingResponseList(

@@ -37,14 +37,14 @@ public class RoomController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> createRoom(@RequestBody @Valid RoomRequest request) {
         Room createdRoom = roomService.createRoom(roomMapper.requestToRoom(request));
         return ResponseEntity.status(HttpStatus.CREATED).body(roomMapper.roomToRoomResponse(createdRoom));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<RoomResponse> updateRoom(@PathVariable("id") Long roomId,
                                                      @RequestBody @Valid RoomRequest request) {
         Room updatedRoom = roomService.updateRoom(roomId, roomMapper.requestToRoom(request));
@@ -52,7 +52,7 @@ public class RoomController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> deleteRoomById(@PathVariable("id") Long roomId) {
         roomService.deleteRoomById(roomId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

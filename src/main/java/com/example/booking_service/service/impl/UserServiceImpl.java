@@ -3,9 +3,14 @@ package com.example.booking_service.service.impl;
 import com.example.booking_service.entity.Role;
 import com.example.booking_service.entity.User;
 import com.example.booking_service.exception.EntityNotFoundException;
+import com.example.booking_service.mapper.UserMapper;
+import com.example.booking_service.model.KafkaUserEvent;
 import com.example.booking_service.repository.UserRepository;
 import com.example.booking_service.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,11 +20,20 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
+
+    @Value("${app.kafka.kafkaNewUserTopic}")
+    private String topicName;
+
+    private final KafkaTemplate<String, KafkaUserEvent> kafkaUserEventTemplate;
 
     private final UserRepository userRepository;
 
     private final PasswordEncoder passwordEncoder;
+
+    private final UserMapper userMapper;
+
 
     @Override
     public User findUserById(Long userId) {
@@ -34,7 +48,11 @@ public class UserServiceImpl implements UserService {
         user.setRoles(Collections.singletonList(role));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         role.setUser(user);
-        return userRepository.saveAndFlush(user);
+        User createdUser = userRepository.saveAndFlush(user);
+
+        kafkaUserEventTemplate.send(topicName, userMapper.bookingToKafkaNewUser(createdUser));
+
+        return createdUser;
     }
 
     @Override

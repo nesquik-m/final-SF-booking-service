@@ -1,8 +1,10 @@
 package com.example.booking_service.repository;
 
+import com.example.booking_service.entity.Booking;
 import com.example.booking_service.entity.Room;
 import com.example.booking_service.web.model.request.RoomFilter;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.JoinType;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -67,16 +69,24 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut) {
+    static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut) { // TODO: не работает, доделать
         return (root, query, cb) -> {
             if (checkIn == null || checkOut == null) {
                 return null;
             }
-            // метод должен при выборе дат заезда и выезда показывать только те номера, которые свободны в этом временном диапазоне
 
-            return null;
+            // Объединение Room с Booking
+            Join<Room, Booking> bookings = root.join("bookings", JoinType.LEFT);
+            // Условия для исключения номеров с пересекающимися бронированиями
+            return cb.and(
+                    cb.or(
+                            cb.isNull(bookings.get("checkIn")),
+                            cb.isNull(bookings.get("checkOut")),
+                            cb.lessThanOrEqualTo(bookings.get("checkOut"), checkIn),
+                            cb.greaterThanOrEqualTo(bookings.get("checkIn"), checkOut)
+                    )
+            );
         };
-
     }
 
     static Specification<Room> byHotelId(Long hotelId) {

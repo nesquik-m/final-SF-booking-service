@@ -36,6 +36,12 @@ public class Room {
     @ToString.Exclude
     private Hotel hotel;
 
+    // продумать связи
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @Builder.Default
+    @ToString.Exclude
+    private List<Booking> bookings = new ArrayList<>();
+
     @Builder.Default
     private List<LocalDate> bookedDates = new ArrayList<>();
 
