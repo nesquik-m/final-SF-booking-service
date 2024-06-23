@@ -1,5 +1,6 @@
 package com.example.booking_service.web.controller;
 
+import com.example.booking_service.aop.AvailableAction;
 import com.example.booking_service.entity.Role;
 import com.example.booking_service.entity.RoleType;
 import com.example.booking_service.entity.User;
@@ -20,8 +21,6 @@ import java.text.MessageFormat;
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
-
-    // TODO: Совершить действия с профилем пользователя может только либо сам пользователь (владелец), либо администратор.
 
     private final UserService userService;
 
@@ -45,6 +44,7 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
+    @AvailableAction
     public ResponseEntity<UserResponse> updateUser(@PathVariable("id") Long userId,
                                                    @RequestBody @Valid UserRequest request) {
         User updatedUser = userService.updateUser(userId, userMapper.requestToUser(request));
@@ -53,6 +53,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
+    @AvailableAction
     public ResponseEntity<Void> deleteUserById(@PathVariable("id") Long userId) {
         userService.deleteUserById(userId);
         return ResponseEntity.noContent().build();
