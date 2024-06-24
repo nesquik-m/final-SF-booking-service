@@ -1,13 +1,11 @@
 package com.example.booking_service.service.impl;
 
 import com.example.booking_service.entity.Booking;
-import com.example.booking_service.entity.Room;
 import com.example.booking_service.exception.AlreadyReservedDatesException;
 import com.example.booking_service.mapper.BookingMapper;
 import com.example.booking_service.model.KafkaBookingEvent;
 import com.example.booking_service.repository.BookingRepository;
 import com.example.booking_service.service.BookingService;
-import com.example.booking_service.service.RoomService;
 import com.example.booking_service.web.model.request.PageableRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +24,6 @@ public class BookingServiceImpl implements BookingService {
     private String topicName;
 
     private final KafkaTemplate<String, KafkaBookingEvent> kafkaBookingEventTemplate;
-
-    private final RoomService roomService;
 
     private final BookingRepository bookingRepository;
 
@@ -43,35 +36,28 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Booking bookARoom(Booking booking) {
-        List<LocalDate> dates = getAllRequestedDates(booking.getCheckIn(), booking.getCheckOut());
-        Room room = booking.getRoom();
-        List<LocalDate> bookedDates = room.getBookedDates();
 
-        boolean hasCommonDate = bookedDates.stream().anyMatch(date -> dates.stream().anyMatch(d -> Objects.equals(date, d)));
-
-        if (hasCommonDate) {
+        if (!isRoomAvailable(booking)) {
             throw new AlreadyReservedDatesException("Даты уже зарезервированы");
         }
 
-        room.addBookedDates(dates);
-        roomService.createRoom(room);
-
         Booking createdBooking = bookingRepository.saveAndFlush(booking);
-
         kafkaBookingEventTemplate.send(topicName, bookingMapper.bookingToKafkaNewBooking(booking));
 
         return createdBooking;
     }
 
-    private List<LocalDate> getAllRequestedDates(LocalDate checkIn, LocalDate checkOut) {
-        List<LocalDate> dates = new ArrayList<>();
+    private boolean isRoomAvailable(Booking booking) {
+        List<Booking> bookings = booking.getRoom().getBookings();
 
-        while (!checkIn.isAfter(checkOut)) {
-            dates.add(checkIn);
-            checkIn = checkIn.plusDays(1);
+        for (Booking book : bookings) {
+            if (!book.getCheckIn().isAfter(booking.getCheckIn()) && !booking.getCheckIn().isAfter(book.getCheckOut()) ||
+                    !book.getCheckIn().isAfter(booking.getCheckOut()) && !booking.getCheckOut().isAfter(book.getCheckOut())) {
+                return false;
+            }
         }
 
-        return dates;
+        return true;
     }
 
 }
