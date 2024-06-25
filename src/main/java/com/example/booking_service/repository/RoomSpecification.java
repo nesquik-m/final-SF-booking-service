@@ -5,6 +5,7 @@ import com.example.booking_service.entity.Room;
 import com.example.booking_service.web.model.request.RoomFilter;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -21,7 +22,7 @@ public interface RoomSpecification {
                 .and(byHotelId(filter.getHotelId()));
     }
 
-    static Specification<Room> byRoomId(Long roomId) {
+    static Specification<Room> byRoomId(Long roomId) { // работает
         return (root, query, cb) -> {
             if (roomId == null) {
                 return null;
@@ -31,7 +32,7 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byDescription(String description) {
+    static Specification<Room> byDescription(String description) { // работает
         return (root, query, cb) -> {
             if (description == null) {
                 return null;
@@ -41,7 +42,7 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byCostRange(BigDecimal minPrice, BigDecimal maxPrice) {
+    static Specification<Room> byCostRange(BigDecimal minPrice, BigDecimal maxPrice) { // работает
         return (root, query, cb) -> {
             if (minPrice == null && maxPrice == null) {
                 return null;
@@ -59,7 +60,7 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byMaxNumberOfPeople(Integer maxNumberOfPeople) {
+    static Specification<Room> byMaxNumberOfPeople(Integer maxNumberOfPeople) { // работает
         return (root, query, cb) -> {
             if (maxNumberOfPeople == null) {
                 return null;
@@ -69,27 +70,24 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut) { // TODO: не работает, доделать
+    static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut) {
         return (root, query, cb) -> {
             if (checkIn == null || checkOut == null) {
                 return null;
             }
 
-            // Объединение Room с Booking
             Join<Room, Booking> bookings = root.join("bookings", JoinType.LEFT);
-            // Условия для исключения номеров с пересекающимися бронированиями
-            return cb.and(
-                    cb.or(
-                            cb.isNull(bookings.get("checkIn")),
-                            cb.isNull(bookings.get("checkOut")),
-                            cb.lessThanOrEqualTo(bookings.get("checkOut"), checkIn),
-                            cb.greaterThanOrEqualTo(bookings.get("checkIn"), checkOut)
-                    )
-            );
+
+            return cb.or(
+                    cb.isNull(bookings.get("checkIn")),
+                    cb.isNull(bookings.get("checkOut")),
+                    cb.and(
+                            cb.not(cb.between(bookings.get("checkIn"), checkIn, checkOut)),
+                            cb.not(cb.between(bookings.get("checkOut"), checkIn, checkOut))));
         };
     }
 
-    static Specification<Room> byHotelId(Long hotelId) {
+    static Specification<Room> byHotelId(Long hotelId) { // TODO: при наличии в БД двух комнат с hotelId = 1, выдает только 1 объект
         return (root, query, cb) -> {
             if (hotelId == null) {
                 return null;
