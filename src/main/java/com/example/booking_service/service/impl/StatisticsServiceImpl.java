@@ -49,7 +49,7 @@ public class StatisticsServiceImpl implements StatisticsService {
     public void uploadStatistics() {
 
         try {
-            FileWriter writer = new FileWriter("data/statistics.csv");
+            FileWriter writer = new FileWriter("/data/statistics.csv");
 
             StatefulBeanToCsv<UserStatistics> userCsvWriter = new StatefulBeanToCsvBuilder(writer).build();
             userCsvWriter.write(findAllUsersData());

@@ -11,6 +11,8 @@ services:
       - mongodb
       - zookeeper
       - kafka
+    volumes:
+      - ./data/statistics.csv:/data/statistics.csv
 
   postgres:
     image: postgres:12.3
