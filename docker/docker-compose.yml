@@ -2,6 +2,16 @@ version: '3'
 
 services:
 
+  app:
+    image: booking-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+      - mongodb
+      - zookeeper
+      - kafka
+
   postgres:
     image: postgres:12.3
     ports:
@@ -28,7 +38,6 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
     ports:
       - "2181:2181"
-
 
   kafka:
     image: confluentinc/cp-kafka:6.2.0

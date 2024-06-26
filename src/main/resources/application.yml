@@ -2,9 +2,12 @@ spring:
 
   jpa:
     generate-ddl: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/app_db
+    url: jdbc:postgresql://postgres:5432/app_db
     username: postgres
     password: postgres
     hikari:
@@ -14,10 +17,10 @@ spring:
 
   data:
     mongodb:
-      uri: mongodb://root:root@localhost:27017/bookingservice?authSource=admin
+      uri: mongodb://root:root@mongodb:27017/bookingservice?authSource=admin
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: kafka:9092
 
 app:
 
