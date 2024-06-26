@@ -40,4 +40,9 @@ public class Room {
     @ToString.Exclude
     private List<Booking> bookings = new ArrayList<>();
 
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Builder.Default
+    @ToString.Exclude
+    private List<UnavailableDate> unavailableDates = new ArrayList<>();
+
 }

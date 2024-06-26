@@ -28,4 +28,3 @@ app:
     kafkaNewUserTopic: "new-user-topic"
     kafkaNewBookingTopic: "new-booking-topic"
     kafkaMessageGroupId: "kafka-message-group-id"
-

@@ -1,10 +1,9 @@
 package com.example.booking_service.repository;
 
-import com.example.booking_service.entity.Booking;
 import com.example.booking_service.entity.Room;
+import com.example.booking_service.entity.UnavailableDate;
 import com.example.booking_service.web.model.request.RoomFilter;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -69,22 +68,22 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut) {
-        return (root, query, cb) -> {
+    static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut){
+        return (root, query, criteriaBuilder) -> {
             if (checkIn == null || checkOut == null) {
-                return null;
+                return criteriaBuilder.conjunction();
             }
 
-            Join<Room, Booking> bookings = root.join("bookings", JoinType.LEFT);
+            Subquery<UnavailableDate> subquery = query.subquery(UnavailableDate.class);
+            Root<UnavailableDate> subRoot = subquery.from(UnavailableDate.class);
+            subquery.select(subRoot.get("id"));
 
-            return cb.or(
-                    cb.isNull(bookings.get("checkIn")),
-                    cb.isNull(bookings.get("checkOut")),
-                    cb.and(
-                            cb.lessThanOrEqualTo(bookings.get("checkOut"), checkIn),
-                            cb.greaterThanOrEqualTo(bookings.get("checkIn"), checkOut)
-                    )
-            );
+            Predicate roomMatch = criteriaBuilder.equal(subRoot.get("room"), root);
+            Predicate dateOverlap = criteriaBuilder.between(subRoot.get("unavailableDate"), checkIn, checkOut);
+
+            subquery.where(criteriaBuilder.and(roomMatch, dateOverlap));
+
+            return criteriaBuilder.not(criteriaBuilder.exists(subquery));
         };
     }
 

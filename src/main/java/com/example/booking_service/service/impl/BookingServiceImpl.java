@@ -1,18 +1,24 @@
 package com.example.booking_service.service.impl;
 
 import com.example.booking_service.entity.Booking;
+import com.example.booking_service.entity.Room;
+import com.example.booking_service.entity.UnavailableDate;
 import com.example.booking_service.exception.AlreadyReservedDatesException;
 import com.example.booking_service.mapper.BookingMapper;
 import com.example.booking_service.model.KafkaBookingEvent;
 import com.example.booking_service.repository.BookingRepository;
 import com.example.booking_service.service.BookingService;
+import com.example.booking_service.service.RoomService;
 import com.example.booking_service.web.model.request.PageableRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,12 +35,15 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingMapper bookingMapper;
 
+    private final RoomService roomService;
+
     @Override
     public List<Booking> findAllBookings(PageableRequest request) {
         return bookingRepository.findAll(request.pageRequest()).getContent();
     }
 
     @Override
+    @Transactional
     public Booking bookARoom(Booking booking) {
 
         if (!isRoomAvailable(booking)) {
@@ -48,16 +57,41 @@ public class BookingServiceImpl implements BookingService {
     }
 
     private boolean isRoomAvailable(Booking booking) {
-        List<Booking> bookings = booking.getRoom().getBookings();
+        Room room = booking.getRoom();
+        List<LocalDate> requestedDates = getAllRequestedDates(booking.getCheckIn(), booking.getCheckOut());
 
-        for (Booking book : bookings) {
-            if (!book.getCheckIn().isAfter(booking.getCheckIn()) && !booking.getCheckIn().isAfter(book.getCheckOut()) ||
-                    !book.getCheckIn().isAfter(booking.getCheckOut()) && !booking.getCheckOut().isAfter(book.getCheckOut())) {
-                return false;
-            }
+        List<LocalDate> unavailableDates = room.getUnavailableDates().stream()
+                .map(UnavailableDate::getUnavailableDate)
+                .distinct()
+                .toList();
+
+        boolean hasIntersection = requestedDates.stream().anyMatch(unavailableDates::contains);
+
+        if (hasIntersection) {
+            return false;
         }
 
+        requestedDates.forEach(date -> {
+            UnavailableDate unavailable = UnavailableDate.builder()
+                    .room(room)
+                    .unavailableDate(date)
+                    .build();
+            room.getUnavailableDates().add(unavailable);
+        });
+
+        roomService.createRoom(room);
         return true;
+    }
+
+    private List<LocalDate> getAllRequestedDates(LocalDate checkIn, LocalDate checkOut) {
+        List<LocalDate> dates = new ArrayList<>();
+
+        while (!checkIn.isAfter(checkOut)) {
+            dates.add(checkIn);
+            checkIn = checkIn.plusDays(1);
+        }
+
+        return dates;
     }
 
 }
