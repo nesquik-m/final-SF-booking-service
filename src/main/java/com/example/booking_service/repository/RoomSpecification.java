@@ -5,7 +5,6 @@ import com.example.booking_service.entity.Room;
 import com.example.booking_service.web.model.request.RoomFilter;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
@@ -22,7 +21,7 @@ public interface RoomSpecification {
                 .and(byHotelId(filter.getHotelId()));
     }
 
-    static Specification<Room> byRoomId(Long roomId) { // работает
+    static Specification<Room> byRoomId(Long roomId) {
         return (root, query, cb) -> {
             if (roomId == null) {
                 return null;
@@ -32,7 +31,7 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byDescription(String description) { // работает
+    static Specification<Room> byDescription(String description) {
         return (root, query, cb) -> {
             if (description == null) {
                 return null;
@@ -42,7 +41,7 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byCostRange(BigDecimal minPrice, BigDecimal maxPrice) { // работает
+    static Specification<Room> byCostRange(BigDecimal minPrice, BigDecimal maxPrice) {
         return (root, query, cb) -> {
             if (minPrice == null && maxPrice == null) {
                 return null;
@@ -60,7 +59,7 @@ public interface RoomSpecification {
         };
     }
 
-    static Specification<Room> byMaxNumberOfPeople(Integer maxNumberOfPeople) { // работает
+    static Specification<Room> byMaxNumberOfPeople(Integer maxNumberOfPeople) {
         return (root, query, cb) -> {
             if (maxNumberOfPeople == null) {
                 return null;
@@ -82,18 +81,20 @@ public interface RoomSpecification {
                     cb.isNull(bookings.get("checkIn")),
                     cb.isNull(bookings.get("checkOut")),
                     cb.and(
-                            cb.not(cb.between(bookings.get("checkIn"), checkIn, checkOut)),
-                            cb.not(cb.between(bookings.get("checkOut"), checkIn, checkOut))));
+                            cb.lessThanOrEqualTo(bookings.get("checkOut"), checkIn),
+                            cb.greaterThanOrEqualTo(bookings.get("checkIn"), checkOut)
+                    )
+            );
         };
     }
 
-    static Specification<Room> byHotelId(Long hotelId) { // TODO: при наличии в БД двух комнат с hotelId = 1, выдает только 1 объект
+    static Specification<Room> byHotelId(Long hotelId) {
         return (root, query, cb) -> {
             if (hotelId == null) {
                 return null;
             }
 
-            return cb.equal(root.get("id"), hotelId);
+            return cb.equal(root.get("hotel").get("id"), hotelId);
         };
     }
 
