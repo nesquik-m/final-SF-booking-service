@@ -69,21 +69,21 @@ public interface RoomSpecification {
     }
 
     static Specification<Room> byPlacementDates(LocalDate checkIn, LocalDate checkOut){
-        return (root, query, criteriaBuilder) -> {
+        return (root, query, cb) -> {
             if (checkIn == null || checkOut == null) {
-                return criteriaBuilder.conjunction();
+                return null;
             }
 
             Subquery<UnavailableDate> subquery = query.subquery(UnavailableDate.class);
             Root<UnavailableDate> subRoot = subquery.from(UnavailableDate.class);
             subquery.select(subRoot.get("id"));
 
-            Predicate roomMatch = criteriaBuilder.equal(subRoot.get("room"), root);
-            Predicate dateOverlap = criteriaBuilder.between(subRoot.get("unavailableDate"), checkIn, checkOut);
+            Predicate roomMatch = cb.equal(subRoot.get("room"), root);
+            Predicate dateOverlap = cb.between(subRoot.get("unavailableDate"), checkIn, checkOut);
 
-            subquery.where(criteriaBuilder.and(roomMatch, dateOverlap));
+            subquery.where(cb.and(roomMatch, dateOverlap));
 
-            return criteriaBuilder.not(criteriaBuilder.exists(subquery));
+            return cb.not(cb.exists(subquery));
         };
     }
 
